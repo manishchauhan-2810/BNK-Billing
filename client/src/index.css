@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+:root {
+  --bnk-primary: #123F37;
+  --bnk-secondary: #6BA79A;
+  --bnk-bg: #F7FAF9;
+  --bnk-card: #FFFFFF;
+}
+
+@theme {
+  --color-bnk-primary: var(--bnk-primary);
+  --color-bnk-secondary: var(--bnk-secondary);
+  --color-bnk-bg: var(--bnk-bg);
+  --color-bnk-card: var(--bnk-card);
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bnk-bg);
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Base transitions */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Exclude transitions from these elements where they cause issues */
+.no-transition * {
+  transition: none !important;
+}
+
+/* Append this to the end of src/index.css.
+   Every number input touched in this update (Age, Amount Received, Payment
+   amount, ChargeTable amounts, discount) uses className="no-spinner" and
+   onWheel={preventWheelChange} together:
+     - this CSS hides the up/down arrow spinner
+     - preventWheelChange (utils/uiHelpers.js) stops mouse-wheel scroll from
+       silently changing the value when the cursor happens to be over the field
+*/
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
