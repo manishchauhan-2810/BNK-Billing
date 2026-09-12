@@ -4,26 +4,45 @@ const invoiceTemplate = require('../templates/invoiceTemplate');
 
 let browserPromise = null;
 
-const getBrowser = () => {
+const getBrowser = async () => {
   if (!browserPromise) {
-    console.log('Starting Chromium...');
+    browserPromise = (async () => {
+      console.log('Starting Chromium...');
 
-    browserPromise = puppeteer
-      .launch({
-        args: chromium.args,
+      // IMPORTANT:
+      // executablePath() is async, so we MUST await it.
+      const executablePath = await chromium.executablePath();
+
+      console.log('Chromium executable path:', executablePath);
+
+      if (!executablePath) {
+        throw new Error('Chromium executable path is empty');
+      }
+
+      const browser = await puppeteer.launch({
+        args: [
+          ...chromium.args,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu'
+        ],
         defaultViewport: chromium.defaultViewport,
-        executablePath: chromium.executablePath(),
+        executablePath: executablePath,
         headless: chromium.headless
-      })
-      .then((browser) => {
-        console.log('Puppeteer browser started successfully');
-        return browser;
-      })
-      .catch((error) => {
-        console.error('Puppeteer launch failed:', error);
-        browserPromise = null;
-        throw error;
       });
+
+      console.log('Puppeteer browser started successfully');
+
+      return browser;
+    })().catch((error) => {
+      console.error('Puppeteer launch failed:', error);
+
+      // Allow another request to try launching again
+      browserPromise = null;
+
+      throw error;
+    });
   }
 
   return browserPromise;
@@ -33,49 +52,54 @@ exports.generatePdf = async (bill) => {
   console.log('Starting PDF generation');
   console.log('Invoice:', bill.invoiceNumber);
 
-  const html = invoiceTemplate(bill);
-
-  console.log('Invoice HTML generated');
-  console.log('HTML length:', html.length);
-
-  const browser = await getBrowser();
-
-  let page;
-
   try {
-    page = await browser.newPage();
+    const html = invoiceTemplate(bill);
 
-    console.log('New Puppeteer page created');
+    console.log('Invoice HTML generated');
+    console.log('HTML length:', html.length);
 
-    await page.setContent(html, {
-      waitUntil: 'networkidle0'
-    });
+    const browser = await getBrowser();
 
-    console.log('HTML loaded into Puppeteer');
+    let page;
 
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-        left: '0px'
+    try {
+      page = await browser.newPage();
+
+      console.log('New Puppeteer page created');
+
+      await page.setContent(html, {
+        waitUntil: 'load',
+        timeout: 30000
+      });
+
+      console.log('HTML loaded into Puppeteer');
+
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '0px',
+          right: '0px',
+          bottom: '0px',
+          left: '0px'
+        }
+      });
+
+      console.log('PDF generated successfully');
+      console.log('PDF size:', pdfBuffer.length);
+
+      return pdfBuffer;
+
+    } finally {
+      if (page) {
+        await page.close().catch((error) => {
+          console.error('Failed to close Puppeteer page:', error);
+        });
       }
-    });
+    }
 
-    console.log('PDF generated successfully');
-    console.log('PDF size:', pdfBuffer.length);
-
-    return pdfBuffer;
   } catch (error) {
     console.error('PDF generation failed:', error);
     throw error;
-  } finally {
-    if (page) {
-      await page.close().catch((err) => {
-        console.error('Failed to close Puppeteer page:', err);
-      });
-    }
   }
 };

@@ -66,22 +66,45 @@ exports.getPendingBills = async (req, res, next) => {
 
 exports.generatePdf = async (req, res, next) => {
   try {
-    console.log('PDF request received');
+    console.log('=================================');
+    console.log('PDF REQUEST RECEIVED');
     console.log('Bill ID:', req.params.id);
     console.log('User:', req.user?._id);
+
     const bill = await billService.getBillById(req.params.id);
+
     console.log('Bill found:', bill.invoiceNumber);
+    console.log('Starting PDF generation...');
+
     const pdfBuffer = await pdfService.generatePdf(bill);
-    console.log('Sending PDF to client');
+
+    console.log('PDF generated');
+    console.log('PDF size:', pdfBuffer.length);
+
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${bill.invoiceNumber}.pdf"`,
       'Content-Length': pdfBuffer.length
     });
+
     res.send(pdfBuffer);
+
   } catch (error) {
-    console.error('PDF CONTROLLER ERROR:', error);
-    next(error);
+    console.error('=================================');
+    console.error('PDF CONTROLLER ERROR');
+    console.error('Name:', error.name);
+    console.error('Message:', error.message);
+    console.error('Stack:', error.stack);
+    console.error('=================================');
+
+    // TEMPORARY:
+    // Send the real error to the browser so we can see
+    // exactly what Render is failing on.
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      error: error.name
+    });
   }
 };
 

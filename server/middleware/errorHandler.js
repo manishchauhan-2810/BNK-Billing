@@ -33,14 +33,22 @@ const sendErrorDev = (err, res) => {
 };
 
 const sendErrorProd = (err, res) => {
-  console.error('ERROR 💥', err);
-
-  res.status(err.statusCode || 500).json({
-    success: false,
-    status: err.status || 'error',
-    message: err.message,
-    name: err.name
-  });
+  // Operational, trusted error: send message to client
+  if (err.isOperational) {
+    res.status(err.statusCode).json({
+      success: false,
+      status: err.status,
+      message: err.message
+    });
+  // Programming or other unknown error: don't leak error details
+  } else {
+    console.error('ERROR 💥', err);
+    res.status(500).json({
+      success: false,
+      status: 'error',
+      message: 'Something went very wrong!'
+    });
+  }
 };
 
 module.exports = (err, req, res, next) => {
