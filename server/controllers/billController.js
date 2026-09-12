@@ -70,24 +70,26 @@ exports.generatePdf = async (req, res, next) => {
     console.log('PDF REQUEST RECEIVED');
     console.log('Bill ID:', req.params.id);
     console.log('User:', req.user?._id);
-
     const bill = await billService.getBillById(req.params.id);
-
     console.log('Bill found:', bill.invoiceNumber);
     console.log('Starting PDF generation...');
-
-    const pdfBuffer = await pdfService.generatePdf(bill);
-
-    console.log('PDF generated');
+    const pdfData = await pdfService.generatePdf(bill);
+    // IMPORTANT:
+    // Convert Puppeteer's Uint8Array into a Node.js Buffer
+    const pdfBuffer = Buffer.from(pdfData);
+    console.log('PDF Buffer created');
     console.log('PDF size:', pdfBuffer.length);
-
+    res.status(200);
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${bill.invoiceNumber}.pdf"`,
-      'Content-Length': pdfBuffer.length
+      'Content-Length': pdfBuffer.length,
+      'Cache-Control': 'no-cache'
     });
-
-    res.send(pdfBuffer);
+    console.log('Sending PDF to client');
+    res.end(pdfBuffer);
+    console.log('PDF sent successfully');
+    console.log('=================================');
 
   } catch (error) {
     console.error('=================================');
@@ -97,14 +99,7 @@ exports.generatePdf = async (req, res, next) => {
     console.error('Stack:', error.stack);
     console.error('=================================');
 
-    // TEMPORARY:
-    // Send the real error to the browser so we can see
-    // exactly what Render is failing on.
-    res.status(500).json({
-      success: false,
-      message: error.message,
-      error: error.name
-    });
+    next(error);
   }
 };
 
