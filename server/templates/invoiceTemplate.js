@@ -161,7 +161,7 @@ const CLINICS = {
       'Healing Hands, Restoring Lives',
 
     phone:
-      '9458703187',
+      '+91 9458703187',
 
     addressLine1:
       'Harikala Complex, Near Jagdamba Mandir Ke Samne',
@@ -176,7 +176,7 @@ const CLINICS = {
       'www.bnkhealthcare.in',
 
     defaultGst:
-      '05BAYPY5535N1ZY',
+      '05ABGFB8162R1ZV',
 
     footerClinicName:
       'Physiotherapy And Rehabilitation Center.'
