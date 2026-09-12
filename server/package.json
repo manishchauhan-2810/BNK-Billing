@@ -8,6 +8,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@sparticuz/chromium": "^131.0.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -18,8 +19,7 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.1",
-    "@sparticuz/chromium": "^123.0.1",
-    "puppeteer-core": "^22.4.1"
+    "puppeteer-core": "^25.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
