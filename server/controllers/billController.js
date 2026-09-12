@@ -66,21 +66,21 @@ exports.getPendingBills = async (req, res, next) => {
 
 exports.generatePdf = async (req, res, next) => {
   try {
+    console.log('PDF request received');
+    console.log('Bill ID:', req.params.id);
+    console.log('User:', req.user?._id);
     const bill = await billService.getBillById(req.params.id);
+    console.log('Bill found:', bill.invoiceNumber);
     const pdfBuffer = await pdfService.generatePdf(bill);
-
-    // NOTE: this was previously a bug — the filename used an escaped
-    // "\${bill.invoiceNumber}" inside the string, which is not interpolated
-    // and would literally send `${bill.invoiceNumber}.pdf` as the filename.
-    // Using a real template literal here fixes that.
+    console.log('Sending PDF to client');
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${bill.invoiceNumber}.pdf"`,
       'Content-Length': pdfBuffer.length
     });
-
     res.send(pdfBuffer);
   } catch (error) {
+    console.error('PDF CONTROLLER ERROR:', error);
     next(error);
   }
 };

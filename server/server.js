@@ -36,7 +36,7 @@ connectDB().then(() => {
 });
 
 const server = app.listen(env.PORT, () => {
-  console.log(`App running on port \${env.PORT} in \${env.NODE_ENV} mode...`);
+  console.log(`App running on port \${process.env.PORT} in \${process.env.NODE_ENV} mode...`);
 });
 
 process.on('unhandledRejection', err => {
