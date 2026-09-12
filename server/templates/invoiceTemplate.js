@@ -207,10 +207,10 @@ const CLINICS = {
       'info@bnkhealthcare.in',
 
     website:
-      'www.bnkhealthcare.in',
+      'www.bnkhealthcare.com',
 
     defaultGst:
-      '',
+      '05ABGFB8162R1ZV',
 
     footerClinicName:
       'BNK Diagnostic Centre.'
