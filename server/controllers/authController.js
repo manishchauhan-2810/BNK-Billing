@@ -16,11 +16,12 @@ const createSendToken = (user, statusCode, res) => {
 
   const cookieOptions = {
     expires: new Date(
-      Date.now() + env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      Date.now() +
+      env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
     secure: isProd,
-    sameSite: 'lax'
+    sameSite: isProd ? 'lax' : 'lax'
   };
 
   res.cookie('token', token, cookieOptions);
@@ -30,7 +31,10 @@ const createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     success: true,
     message: 'Logged in successfully',
-    data: { user }
+    data: {
+      user,
+      token
+    }
   });
 };
 

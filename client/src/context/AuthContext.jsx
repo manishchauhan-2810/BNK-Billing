@@ -25,27 +25,34 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      const data = await authService.login(email, password); // { user, token }
-      setUser(data.user);
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || 'Login failed'
-      };
-    }
-  };
+const login = async (email, password) => {
+  try {
+    const data = await authService.login(email, password);
 
-  const logout = async () => {
-    try {
-      await authService.logout();
-      setUser(null);
-    } catch (error) {
-      toast.error('Failed to logout');
+    // Save JWT for browsers where the cookie is not reliably sent
+    if (data.token) {
+      localStorage.setItem('token', data.token);
     }
-  };
+
+    setUser(data.user);
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.message || 'Login failed'
+    };
+  }
+};
+
+const logout = async () => {
+  try {
+    await authService.logout();
+  } finally {
+    localStorage.removeItem('token');
+    setUser(null);
+  }
+};
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, checkAuth }}>
