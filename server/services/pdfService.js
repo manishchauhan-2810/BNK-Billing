@@ -1,21 +1,19 @@
-const puppeteer = require('puppeteer');
+const chromium = require('@sparticuz/chromium');
+const puppeteer = require('puppeteer-core');
 const invoiceTemplate = require('../templates/invoiceTemplate');
 
 let browserPromise = null;
 
 const getBrowser = () => {
   if (!browserPromise) {
-    console.log('Starting Puppeteer...');
+    console.log('Starting Chromium...');
 
     browserPromise = puppeteer
       .launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu'
-        ]
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: chromium.executablePath(),
+        headless: chromium.headless
       })
       .then((browser) => {
         console.log('Puppeteer browser started successfully');
@@ -53,7 +51,7 @@ exports.generatePdf = async (bill) => {
       waitUntil: 'networkidle0'
     });
 
-    console.log(' HTML loaded into Puppeteer');
+    console.log('HTML loaded into Puppeteer');
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
