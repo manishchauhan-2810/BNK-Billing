@@ -167,9 +167,17 @@ body {
   flex-shrink: 0;
 }
 
-.main-table col.col-1 { width: 31%; }
-.main-table col.col-2 { width: 39%; }
-.main-table col.col-3 { width: 30%; }
+.main-table col.col-1 {
+  width: 31%;
+}
+
+.main-table col.col-2 {
+  width: 39%;
+}
+
+.main-table col.col-3 {
+  width: 30%;
+}
 
 .main-table th {
   height: 8.5mm;
@@ -203,9 +211,17 @@ body {
   border-right: none;
 }
 
-.col-diagnosis { text-align: left; }
-.col-treatment { text-align: left; }
-.col-amount { text-align: center; }
+.col-diagnosis {
+  text-align: left;
+}
+
+.col-treatment {
+  text-align: left;
+}
+
+.col-amount {
+  text-align: center;
+}
 
 /* ============================================================
    INNER TABLES
@@ -306,9 +322,17 @@ body {
   border: 1.5px solid var(--navy);
 }
 
-.lineitem-table col:nth-child(1) { width: 10%; }
-.lineitem-table col:nth-child(2) { width: 60%; }
-.lineitem-table col:nth-child(3) { width: 30%; }
+.lineitem-table col:nth-child(1) {
+  width: 10%;
+}
+
+.lineitem-table col:nth-child(2) {
+  width: 60%;
+}
+
+.lineitem-table col:nth-child(3) {
+  width: 30%;
+}
 
 .lineitem-table th {
   height: 8mm;
@@ -426,21 +450,30 @@ body {
 
 .footer-area {
   width: 100%;
-  height: 48mm;
-  flex: 0 0 48mm;
+  height: 58mm;
+  flex: 0 0 58mm;
   position: relative;
   overflow: hidden;
 }
+
+/*
+  IMPORTANT:
+  The footer image is 40mm high.
+  The signature section is positioned ABOVE it.
+*/
 
 .signature-row {
   position: absolute;
   left: 5mm;
   right: 5mm;
-  bottom: 39mm;
+  bottom: 43mm;
   height: 12mm;
+
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+
+  z-index: 2;
 }
 
 .footer-thanks {
@@ -453,6 +486,7 @@ body {
   width: 9mm;
   flex: 0 0 9mm;
   margin-right: 3mm;
+
   color: var(--navy);
   font-size: 25px;
   line-height: 1;
@@ -474,20 +508,32 @@ body {
 .signature-line {
   border-top: 1.5px solid #000;
   padding-top: 1mm;
+
   font-size: 9.5px;
   font-weight: 700;
   color: #111;
 }
 
+/*
+  FOOTER IMAGE
+  This occupies only the bottom 40mm.
+*/
+
 .footer-image {
   position: absolute;
+
   left: 0;
   right: 0;
   bottom: 0;
+
   display: block;
+
   width: 210mm;
   height: 40mm;
+
   object-fit: fill;
+
+  z-index: 1;
 }
 
 /* ============================================================
